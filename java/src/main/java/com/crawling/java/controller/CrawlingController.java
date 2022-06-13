@@ -222,12 +222,7 @@ public class CrawlingController {
                     content_desc = content_desc.replaceAll(",","");
 
                     // "n일 전"으로 나오는 날짜 dateFormat 으로 변환
-                    /*
-                    if(content_post_date.endsWith("전")){
-                        int day = Integer.parseInt(content_post_date.substring(0,1));
-                        content_post_date = LocalDateTime.now().minusDays(day).format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
-                    }
-                    */
+                   
                     if(content_post_date.endsWith("일 전")){
                         int day = Integer.parseInt(content_post_date.substring(0,1));
                         content_post_date = LocalDateTime.now().minusDays(day).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -337,7 +332,7 @@ public class CrawlingController {
                     String content_desc = dsc_area_element.getElementsByClass("dsc_link _foryou_trigger").text();
                     String content_post_date = dsc_area_element.getElementsByClass("date").text();
                     String content_url = dsc_area_element.getElementsByClass("name_link").attr("href");
-                    //String content_id = getDefaultValue(content_url);
+                   
 
                     //int a = content_url.indexOf("/internal/");
                     //int b  = content_url.lastIndexOf("?query");
@@ -746,13 +741,6 @@ public class CrawlingController {
         crawlingService.updateKeyword(keywordVO);
     }
 
-    private String getDefaultValue (String str) {
-        Pattern pattern = Pattern.compile("(\\binternal/\\b)(.*?)(\\b?\\b)");
-        Matcher matcher = pattern.matcher(str);
-        if(matcher.find()){    // 정규식과 매칭되는 값이 있으면
-            return matcher.group(2).trim();        // 특정 단어 사이의 값을 추출한다
-        }
-        return null;
-    }
+   
 
 }
