@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crawling.java.mapper.CrawlingMapper">
+
+    <insert id="addKeyword" parameterType="com.crawling.java.vo.KeywordVO" useGeneratedKeys="true" keyProperty="seq" keyColumn="seq">
+        INSERT INTO influencer.keyword(keyword, status)
+            VALUES(#{keyword}, #{status})
+    </insert>
+
+    <update id="updateKeyword" parameterType="com.crawling.java.vo.KeywordVO">
+        UPDATE influencer.keyword
+        SET status = #{status}
+        WHERE seq = #{seq}
+    </update>
+
+    <select id="getKeyword" resultType="com.crawling.java.vo.KeywordVO">
+        SELECT seq, keyword, status, regdate
+        FROM influencer.keyword
+    </select>
+
+
+    <!-- logVo 최초 INSERT 후 pk값 LogVo에 넘겨줌 -->
+
+    <insert id="addLog" parameterType="com.crawling.java.vo.LogVO" useGeneratedKeys="true" keyProperty="seq" keyColumn="seq">
+        INSERT INTO influencer.gather_log(keyword, process, status, message)
+        VALUES (#{keyword}, #{process}, #{status}, #{message})
+    </insert>
+
+    <update id="updateLog" parameterType="com.crawling.java.vo.LogVO">
+        UPDATE influencer.gather_log
+        SET message = #{message}, status = #{status}
+        WHERE seq = #{seq}
+    </update>
+
+    <select id="getLog" resultType="com.crawling.java.vo.LogVO">
+        SELECT seq, regdate, keyword, process, status, message
+        FROM influencer.gather_log
+        WHERE seq = #{seq}
+    </select>
+
+
+    <insert id="addKeywordInfluencerInfo" parameterType="com.crawling.java.vo.KeywordInfluencerInfoVO" useGeneratedKeys="true" keyProperty="seq" keyColumn="seq">
+        INSERT INTO influencer.keyword_influencer_info(keyword_seq, type, total_count)
+        VALUES(#{keyword_seq},#{type}, #{total_count});
+    </insert>
+
+    <insert id="addKeywordInfluencerDetail">
+        LOAD DATA INFILE #{filePath} IGNORE
+        INTO TABLE influencer.keyword_influencer_detail CHARACTER SET UTF8MB4 FIELDS TERMINATED BY ','
+        IGNORE 1 ROWS
+        (@keyword_seq, @type, @count)
+        SET seq = null
+        , keyword_seq = @keyword_seq, type = @type, count = @count
+    </insert>
+
+    <insert id="addRecommandedInfluencer">
+        LOAD DATA INFILE #{filePath} IGNORE
+        INTO TABLE influencer.recommanded_influencer CHARACTER SET UTF8MB4 FIELDS TERMINATED BY ','
+        IGNORE 1 ROWS
+        (@keyword_seq, @influencer_img, @influencer_name, @influencer_type, @influencer_type_detail
+        , @fan_count, @content_title, @content_desc, @content_img, @content_post_date)
+        SET seq = null
+        , keyword_seq = @keyword_seq, influencer_img = @influencer_img , influencer_name = @influencer_name
+        , influencer_type = @influencer_type, influencer_type_detail = @influencer_type_detail
+        , fan_count = @fan_count, content_title = @content_title, content_desc = @content_desc
+        , content_img = @content_img, content_post_date = @content_post_date
+    </insert>
+
+    <insert id="addInfluencerContent">
+        LOAD DATA INFILE #{filePath} IGNORE
+        INTO TABLE influencer.influencer_content CHARACTER SET UTF8MB4 FIELDS TERMINATED BY ','
+        IGNORE 1 ROWS
+        (@keyword_seq, @content_id, @channel_type, @influencer_image, @influencer_name
+        , @influencer_type, @influencer_type_detail, @fan_count, @sns_follower_desc, @influencer_home_url, @content_url
+        , @influencer_info1_title , @influencer_info2_title ,@influencer_info3_title
+        ,@influencer_info1_desc ,@influencer_info2_desc , @influencer_info3_desc
+        ,@content_title ,@content_desc ,@content_post_date)
+        SET seq = null
+        , keyword_seq = @keyword_seq, content_id = @content_id , channel_type = @channel_type
+        , influencer_image = @influencer_image, influencer_name = @influencer_name
+        , influencer_type = @influencer_type, influencer_type_detail = @influencer_type_detail
+        , fan_count = @fan_count , sns_follower_desc = @sns_follower_desc, influencer_home_url = @influencer_home_url
+        , content_url = @content_url
+        , influencer_info1_title = @influencer_info1_title , influencer_info2_title = @influencer_info2_title
+        , influencer_info3_title = @influencer_info3_title
+        , influencer_info1_desc = @influencer_info1_desc , influencer_info2_desc = @influencer_info2_desc
+        , influencer_info3_desc = @influencer_info3_desc, content_title = @content_title
+        , content_desc = @content_desc, content_post_date = @content_post_date
+    </insert>
+
+    <insert id="addInfluencerContentImage">
+        LOAD DATA INFILE #{filePath} IGNORE
+        INTO TABLE influencer.influencer_content_image CHARACTER SET UTF8MB4 FIELDS TERMINATED BY ','
+        IGNORE 1 ROWS
+        (@keyword_seq, @content_id, @content_image_url)
+        SET seq = null
+        , keyword_seq = @keyword_seq, content_id = @content_id, content_image_url = @content_image_url
+    </insert>
+
+    <insert id="addRelatedContent">
+        LOAD DATA INFILE #{filePath} IGNORE
+        INTO TABLE influencer.related_content CHARACTER SET UTF8MB4 FIELDS TERMINATED BY ','
+        IGNORE 1 ROWS
+        (@keyword_seq, @content_id, @content_url, @content_title)
+        SET seq = null
+        , keyword_seq = @keyword_seq, content_id = @content_id
+        , content_url = @content_url, content_title = @content_title
+    </insert>
+
+    <insert id="addPopularTopic">
+        LOAD DATA INFILE #{filePath} IGNORE
+        INTO TABLE influencer.popular_topic CHARACTER SET UTF8MB4 FIELDS TERMINATED BY ','
+        IGNORE 1 ROWS
+        (@keyword_seq, @topic, @topic_image_url, @topic_count)
+        SET seq = null
+        , keyword_seq = @keyword_seq, topic = @topic
+        , topic_image_url = @topic_image_url, topic_count = @topic_count
+
+    </insert>
+	
+	
+</mapper>
